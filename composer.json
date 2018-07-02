@@ -1,0 +1,12 @@
+{
+    "name": "acexintense/timing-jira",
+    "require": {
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "authors": [
+        {
+            "name": "Sam Grew",
+            "email": "sam.grew97@googlemail.com"
+        }
+    ]
+}
