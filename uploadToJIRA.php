@@ -3,11 +3,15 @@
 use GuzzleHttp\Pool;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use Models\Worklog;
+use Models\Authentication;
+use Models\JIRA;
 
 include "vendor/autoload.php";
-include "models/Worklog.php";
-include "models/Authentication.php";
-include "models/JIRA.php";
+
+include "exceptions/DataTypeException.php";
+include "exceptions/JIRAException.php";
+
 include "./Console.php";
 
 // Reads the CSV and creates an array of rows from the CSV data.
@@ -34,7 +38,11 @@ Authentication::setAuthenticationFromFile('credentials.json');
 //Sets the URL for the JIRA instance.
 JIRA::setURL('');
 
-//Loop through each row on the CSV and upload the Data.
-foreach($formattedRows as $formattedRow) {
-    (new Worklog($formattedRow['Task Title'], 0, $formattedRow['Duration'], $formattedRow['Start Date'], $formattedRow['Notes']))->uploadWorklogToJIRA();
+try {
+    //Loop through each row on the CSV and upload the Data.
+    foreach ($formattedRows as $formattedRow) {
+        JIRA::addWorklog('WEB-530', new Worklog(JIRA::formatDate($formattedRow['Start Date']), (float)$formattedRow['Duration'], $formattedRow['Notes']));
+    }
+} catch (Exception $exception) {
+    Console::log($exception->getMessage());
 }

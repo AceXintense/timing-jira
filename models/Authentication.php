@@ -1,5 +1,7 @@
 <?php
 
+namespace Models;
+
 /*
  * Authentication class to handle all the Authentication for JIRA.
  */

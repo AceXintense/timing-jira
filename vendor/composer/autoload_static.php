@@ -17,6 +17,10 @@ class ComposerStaticIniteb78fc45b75778034eaa2a65cd89eafe
         array (
             'Psr\\Http\\Message\\' => 17,
         ),
+        'M' => 
+        array (
+            'Models\\' => 7,
+        ),
         'G' => 
         array (
             'GuzzleHttp\\Psr7\\' => 16,
@@ -29,6 +33,10 @@ class ComposerStaticIniteb78fc45b75778034eaa2a65cd89eafe
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Models\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/models',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (

@@ -8,5 +8,11 @@
             "name": "Sam Grew",
             "email": "sam.grew97@googlemail.com"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "Models\\": "models/"
+        }
+    },
+    "description": ""
 }
