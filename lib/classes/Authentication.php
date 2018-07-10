@@ -41,11 +41,16 @@ class Authentication
      * Sets the username and password in memory.
      * @param string $username
      * @param string $password
+     * @param bool $base64encoded
      */
-    public static function setUsernameAndPassword($username, $password)
+    public static function setUsernameAndPassword($username, $password, $base64encoded = false)
     {
         self::$username = $username;
-        self::$password = $password;
+        if ($base64encoded) {
+            self::$password = base64_decode($password);
+        } else {
+            self::$password = $password;
+        }
     }
 
     /**

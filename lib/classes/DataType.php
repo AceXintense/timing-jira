@@ -2,6 +2,9 @@
 
 namespace Core;
 
+/*
+ * Datatype checking. Checks to see if the data type of a value is valid.
+ */
 class DataType
 {
     const STRING = 'string';
@@ -45,7 +48,7 @@ class DataType
      */
     private static function isString($data)
     {
-        if (is_string($data)) {
+        if (\is_string($data)) {
             return true;
         }
         return false;
@@ -58,7 +61,7 @@ class DataType
      */
     private static function isInteger($data)
     {
-        if (is_int($data)) {
+        if (\is_int($data)) {
             return true;
         }
         return false;
@@ -71,7 +74,7 @@ class DataType
      */
     private static function isFloat($data)
     {
-        if (is_float($data)) {
+        if (\is_float($data)) {
             return true;
         }
         return false;
@@ -84,7 +87,7 @@ class DataType
      */
     private static function isObject($data)
     {
-        if (is_object($data)) {
+        if (\is_object($data)) {
             return true;
         }
         return false;
@@ -97,7 +100,7 @@ class DataType
      */
     private static function isArray($data)
     {
-        if (is_array($data)) {
+        if (\is_array($data)) {
             return true;
         }
         return false;

@@ -1,36 +1,36 @@
 <?php
 
 use Core\Authentication;
+use Core\Console;
 use Core\CSVParser;
 use Core\JIRA;
-use GuzzleHttp\Pool;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
 use Models\Worklog;
+include 'vendor/autoload.php';
 
-include "vendor/autoload.php";
-
-include "exceptions/DataTypeException.php";
-include "exceptions/JIRAException.php";
-
-include "./lib/classes/Console.php";
-include "./lib/classes/CSVParser.php";
-include "./lib/classes/JIRA.php";
-include "./lib/classes/Authentication.php";
-include "./lib/classes/DataType.php";
-
-$formattedRows = CSVParser::getInstance()->load('./data/Timing Export.csv')->format()->getFormattedRows();
-
-//Sets the Authentication for JIRA.
-Authentication::setAuthenticationFromFile('credentials.json');
-//Sets the URL for the JIRA instance.
-JIRA::setURL('');
+$dotenv = new Dotenv\Dotenv(__DIR__);
+$dotenv->load();
+/*
+ * Initial script startup setting JIRA Login, URL, CSV Data.
+ */
+CSVParser::getInstance()->load('./data/Timing Export.csv');
+Authentication::setUsernameAndPassword(getenv('JIRA_USERNAME'), getenv('JIRA_PASSWORD'), getenv('JIRA_PASSWORD_BASE64'));
+JIRA::setURL(getenv('JIRA_URL'));
 
 try {
     //Loop through each row on the CSV and upload the Data.
-    foreach ($formattedRows as $formattedRow) {
-        JIRA::addWorklog($formattedRow['Task Title'], new Worklog($formattedRow['Task Title'], JIRA::formatDate($formattedRow['Start Date']), (float)$formattedRow['Duration'], $formattedRow['Notes']));
+    foreach (CSVParser::getInstance()->format()->getFormattedRows() as $formattedRow) {
+        JIRA::addWorklog(
+            $formattedRow['Task Title'],
+            new Worklog(
+                $formattedRow['Task Title'],
+                JIRA::formatDate($formattedRow['Start Date']),
+                (float)$formattedRow['Duration'],
+                $formattedRow['Notes']
+            )
+        );
     }
 } catch (Exception $exception) {
+    Console::log($exception->getMessage());
+} catch (\GuzzleHttp\Exception\GuzzleException $exception) {
     Console::log($exception->getMessage());
 }

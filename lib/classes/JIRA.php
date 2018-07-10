@@ -6,13 +6,16 @@
 
 namespace Core;
 
-use Console;
-use DataTypeException;
 use DateTime;
+use Exceptions\DataTypeException;
+use Exceptions\JIRAException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use JIRAException;
+use Models\Worklog;
 
+/*
+ * Simple JIRA interaction for the script to access what it needs to.
+ */
 class JIRA
 {
     private static $URL;
@@ -110,7 +113,7 @@ class JIRA
     private static function getHeaders()
     {
         return [
-            'Authorization' => "Basic " . Authentication::getBasicAuthentication(),
+            'Authorization' => 'Basic ' . Authentication::getBasicAuthentication(),
             'Content-Type' => 'application/json; charset=utf-8'
         ];
     }
@@ -178,7 +181,7 @@ class JIRA
     /**
      * Calls the API using the URL and the location followed by the data and the URL parameters.
      * @param $location
-     * @param null $data
+     * @param Worklog $data
      * @param mixed ...$parameters
      * @return string
      * @throws DataTypeException
@@ -198,6 +201,9 @@ class JIRA
             $response = (new Client())->send($request);
             return json_decode($response->getBody()->getContents());
         } catch (\GuzzleHttp\Exception\ClientException $exception) {
+            if ($exception->getCode() === 403) {
+                die('Access is denied.');
+            }
             Console::log('Cannot find Issue : ' . $data->issueKey);
         }
     }

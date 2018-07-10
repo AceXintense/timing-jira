@@ -2,6 +2,9 @@
 
 namespace Core;
 
+/*
+ * Parses CSV's and allows the application to manipulate the data however they want.
+ */
 class CSVParser
 {
     private static $instance;
@@ -24,7 +27,7 @@ class CSVParser
 
     public function load($filePath)
     {
-        $this->file = fopen($filePath, 'r');
+        $this->file = fopen($filePath, 'rb');
         $this->fileContents = file_get_contents($filePath);
         while (($line = fgetcsv($this->file)) !== FALSE) {
             $this->csvRows[] = $line;

@@ -1,5 +1,7 @@
 <?php
 
+namespace Core;
+
 /*
  * Simple class to handle the console logging.
  */
