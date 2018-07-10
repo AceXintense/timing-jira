@@ -4,7 +4,7 @@
  * Simple JIRA class that stores the URL this can have functionality added later.
  */
 
-namespace Models;
+namespace Core;
 
 use Console;
 use DataTypeException;
@@ -19,16 +19,16 @@ class JIRA
     const APILocations = [
         'getIssueWorklog' => [
             'type' => 'GET',
-            'url' => '/rest/api/2/issue/{issueIdOrKey}/worklog',
+            'url' => '/rest/api/2/issue/{issueKey}/worklog',
             'parameters' => [
-                'issueIdOrKey' => DataType::STRING
+                'issueKey' => DataType::STRING
             ]
         ],
         'addWorklog' => [
             'type' => 'POST',
-            'url' => '/rest/api/2/issue/{issueIdOrKey}/worklog',
+            'url' => '/rest/api/2/issue/{issueKey}/worklog',
             'parameters' => [
-                'issueIdOrKey' => DataType::STRING
+                'issueKey' => DataType::STRING
             ],
             'requestStructure' => [
                 'comment' => [
@@ -47,25 +47,25 @@ class JIRA
         ],
         'getWorklog' => [
             'type' => 'GET',
-            'url' => '/rest/api/2/issue/{issueIdOrKey}/worklog/{id}',
+            'url' => '/rest/api/2/issue/{issueKey}/worklog/{id}',
             'parameters' => [
-                'issueIdOrKey' => DataType::STRING,
+                'issueKey' => DataType::STRING,
                 'id' => DataType::INTEGER
             ]
         ],
         'updateWorklog' => [
             'type' => 'PUT',
-            'url' => '/rest/api/2/issue/{issueIdOrKey}/worklog/{id}',
+            'url' => '/rest/api/2/issue/{issueKey}/worklog/{id}',
             'parameters' => [
-                'issueIdOrKey' => DataType::STRING,
+                'issueKey' => DataType::STRING,
                 'id' => DataType::INTEGER
             ]
         ],
         'deleteWorklog' => [
             'type' => 'DELETE',
-            'url' => '/rest/api/2/issue/{issueIdOrKey}/worklog/{id}',
+            'url' => '/rest/api/2/issue/{issueKey}/worklog/{id}',
             'parameters' => [
-                'issueIdOrKey' => DataType::STRING,
+                'issueKey' => DataType::STRING,
                 'id' => DataType::INTEGER
             ]
         ]
@@ -81,7 +81,26 @@ class JIRA
      */
     public static function addWorklog($issueKey, $data)
     {
-        self::callAPI('addWorklog', $data, $issueKey);
+        if (!self::checkForPreviousWorklog($issueKey, $data)) {
+            Console::log("$issueKey Processing");
+            self::callAPI('addWorklog', $data, $issueKey);
+            Console::log("$issueKey Success");
+            return;
+        }
+        Console::log("$issueKey already has a Worklog at this time skipping...");
+    }
+
+    /**
+     * Returns a worklog from the api using the issue key.
+     * @param $issueKey
+     * @param $data
+     * @throws DataTypeException
+     * @throws JIRAException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public static function getIssueWorklog($issueKey)
+    {
+        self::callAPI('getIssueWorklog', null, $issueKey);
     }
 
     /**
@@ -94,6 +113,27 @@ class JIRA
             'Authorization' => "Basic " . Authentication::getBasicAuthentication(),
             'Content-Type' => 'application/json; charset=utf-8'
         ];
+    }
+
+
+    /**
+     * Checks to see if there is a worklog already in the new worklog start position.
+     * @param $issueKey
+     * @param $data
+     * @return bool
+     * @throws DataTypeException
+     * @throws JIRAException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    private static function checkForPreviousWorklog($issueKey, $data)
+    {
+        $worklogs = self::callAPI('getIssueWorklog', $data, $issueKey)->worklogs;
+        foreach ($worklogs as $worklog) {
+            if ($data->started === $worklog->started) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -126,7 +166,11 @@ class JIRA
                     }
                     continue;
                 }
-                throw new JIRAException($key . ' is not in the data structure');
+                if (!empty($APILocation['parameters'][$key])) {
+                    unset($data->$key);
+                    continue;
+                }
+                throw new JIRAException($APILocation['url']. $key . ' is not in the data structure');
             }
         }
     }
@@ -136,6 +180,7 @@ class JIRA
      * @param $location
      * @param null $data
      * @param mixed ...$parameters
+     * @return string
      * @throws DataTypeException
      * @throws JIRAException
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -151,10 +196,9 @@ class JIRA
                 json_encode($data)
             );
             $response = (new Client())->send($request);
-            Console::log('Response HTTP : ' . $response->getStatusCode());
-
+            return json_decode($response->getBody()->getContents());
         } catch (\GuzzleHttp\Exception\ClientException $exception) {
-//            Console::log('Cannot find Issue : ' . $this->getWorklog()['issue']['key']);
+            Console::log('Cannot find Issue : ' . $data->issueKey);
         }
     }
 

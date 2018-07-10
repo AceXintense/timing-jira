@@ -1,6 +1,6 @@
 <?php
 
-namespace Models;
+namespace Core;
 
 class DataType
 {
@@ -10,6 +10,12 @@ class DataType
     const OBJECT = 'object';
     const ARRAY = 'array';
 
+    /**
+     * Check to see if the data is a type. Returns true or false.
+     * @param $dataType
+     * @param $data
+     * @return bool
+     */
     public static function isDataType($dataType, $data)
     {
         switch($dataType) {
@@ -27,7 +33,7 @@ class DataType
                 return self::isArray($data);
                 break;
             default:
-                die('Uh oh no... This is not a valid DT');
+                die('Uh oh no... This is not a valid DataType..');
                 break;
         }
     }
