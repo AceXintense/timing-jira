@@ -27,7 +27,7 @@ class CSVParser
 
     public function load($filePath)
     {
-        $this->file = fopen($filePath, 'r');
+        $this->file = fopen($filePath, 'rb');
         $this->fileContents = file_get_contents($filePath);
         while (($line = fgetcsv($this->file)) !== FALSE) {
             $this->csvRows[] = $line;

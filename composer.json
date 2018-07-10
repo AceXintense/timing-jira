@@ -12,7 +12,9 @@
     ],
     "autoload": {
         "psr-4": {
-            "Models\\": "models/"
+            "Models\\": "models/",
+            "Core\\": "lib/classes/",
+            "Exceptions\\": "lib/exceptions/"
         }
     },
     "description": ""
