@@ -1,5 +1,7 @@
 <?php
 
+namespace Core;
+
 /*
  * Authentication class to handle all the Authentication for JIRA.
  */
