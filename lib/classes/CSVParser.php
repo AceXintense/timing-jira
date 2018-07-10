@@ -2,6 +2,9 @@
 
 namespace Core;
 
+/*
+ * Parses CSV's and allows the application to manipulate the data however they want.
+ */
 class CSVParser
 {
     private static $instance;

@@ -2,6 +2,9 @@
 
 namespace Core;
 
+/*
+ * Datatype checking. Checks to see if the data type of a value is valid.
+ */
 class DataType
 {
     const STRING = 'string';

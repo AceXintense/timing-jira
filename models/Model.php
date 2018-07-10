@@ -2,6 +2,9 @@
 
 namespace Models;
 
+/*
+ * Base model which all models will extend to keep similar functionality in one place.
+ */
 class Model
 {
     /**

@@ -13,6 +13,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use JIRAException;
 
+/*
+ * Simple JIRA interaction for the script to access what it needs to.
+ */
 class JIRA
 {
     private static $URL;
