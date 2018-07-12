@@ -28,9 +28,9 @@ foreach (Files::getInstance()->getFilesInDirectory(getenv('DATA_DIRECTORY')) as 
         //Loop through each row on the CSV and upload the Data.
         foreach (CSVParser::getInstance()->format()->getFormattedRows() as $formattedRow) {
             JIRA::addWorklog(
-                $formattedRow['Task Title'],
+                Worklog::getIssueKey($formattedRow['Task Title'], Worklog::DASH_SEPARATED_ISSUE_NUMBER),
                 new Worklog(
-                    $formattedRow['Task Title'],
+                    Worklog::getIssueKey($formattedRow['Task Title'], Worklog::DASH_SEPARATED_ISSUE_NUMBER),
                     JIRA::formatDate($formattedRow['Start Date']),
                     (float)$formattedRow['Duration'],
                     $formattedRow['Notes']
