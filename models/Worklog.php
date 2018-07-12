@@ -18,7 +18,6 @@ class Worklog extends Model
     public static function getIssueKey($issueTitle, $matchRegex)
     {
         preg_match($matchRegex, $issueTitle,$matches);
-        die(var_dump($matches));
         return $matches[0];
     }
 }
